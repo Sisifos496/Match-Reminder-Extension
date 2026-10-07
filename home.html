@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Reminder</title>
+    <style>
+        body {
+            background-color: rgb(20, 20, 20);
+            text-align: center;   
+            width: 200px;
+        }
+
+        .input {
+            background-color: rgb(98, 25, 57);
+            color: rgb(232, 231, 231);
+            border: rgb(26, 25, 25);
+            outline: none;
+            padding: 4px;
+        }
+
+        .title {
+            color: rgb(232, 231, 231);
+        }
+
+        .team-search-input {
+            width: 80%;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: none;
+            outline: none;
+        }
+
+        #results-list {
+            list-style: none;
+            margin: 10px 0;
+            padding: 0;
+        }
+
+        .team-result {
+            align-items: center;
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            margin: 8px 0;
+            padding-left: 12px;
+        }
+
+        .saved-teams-button {
+            background-color: rgb(98, 25, 57);
+            color: rgb(232, 231, 231);
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .api-warning {
+            color: #fbbf24;
+            font-size: 10px;
+            line-height: 1.4;
+            margin: 8px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <h3 class="title">Match Reminder</h3>
+    <input type="text" class="team-search-input" placeholder="Search a soccer team...">
+    <ul id="results-list" style="color: white;"></ul>
+    <button class="saved-teams-button" id="saved-teams-button" type="button">View saved teams</button>
+    <p class="api-warning">If the extension isn't working, the issue is most likely related to API rate limit. Try again after waiting a moment.</p>
+    <script src="extension.js"></script>
+</body>
+</html>

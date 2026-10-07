@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Teams</title>
+    <style>
+        body {
+            background-color: rgb(20, 20, 20);
+            color: rgb(232, 231, 231);
+            font-family: sans-serif;
+            margin: 0;
+            padding: 24px;
+        }
+
+        main {
+            margin: 0 auto;
+            max-width: 560px;
+        }
+
+        .header {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-link {
+            color: rgb(232, 231, 231);
+        }
+
+        #saved-teams-list {
+            list-style: none;
+            margin: 24px 0 0;
+            padding: 0;
+        }
+
+        .team-item {
+            align-items: center;
+            background-color: rgb(35, 35, 35);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 12px;
+        }
+
+        .team-item:focus {
+            outline: 2px solid rgb(180, 100, 140);
+        }
+
+        .team-details {
+            align-items: center;
+            display: flex;
+            gap: 12px;
+        }
+
+        .team-logo {
+            height: 40px;
+            object-fit: contain;
+            width: 40px;
+        }
+
+        .remove-button {
+            background: transparent;
+            border: 1px solid rgb(180, 60, 60);
+            border-radius: 4px;
+            color: rgb(240, 150, 150);
+            cursor: pointer;
+            padding: 6px 10px;
+        }
+
+        .empty-state {
+            color: rgb(160, 160, 160);
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <h1>Saved Teams</h1>
+        </div>
+        <ul id="saved-teams-list"></ul>
+    </main>
+    <script src="saved-teams.js"></script>
+</body>
+</html>
