@@ -1,7 +1,7 @@
 {
   "name": "Match Reminder",
   "description": "Match Reminder by Yusuf Ege Doğan",
-  "version": "0.1",
+  "version": "0.2",
   "manifest_version": 3,
   "action": {
     "default_popup": "home.html"
@@ -17,11 +17,12 @@
   ],
   "permissions": [
     "storage",
-    "alarms"
+    "alarms",
+    "activeTab",
+    "scripting"
   ],
   "host_permissions": [
-    "https://www.thesportsdb.com/*",
-    "https://v3.football.api-sports.io/*"
+    "https://www.thesportsdb.com/*"
   ],
   "icons": {
     "16": "Match Reminder Logo.png",

@@ -54,7 +54,7 @@ function showLineupReminder(matches, reminderMinutes) {
     const title = document.createElement("strong");
     title.textContent = reminderMinutes === 10
         ? "Match starts in 10 minutes"
-        : "Lineups are announced";
+        : "Match starts in 1 hour";
     popup.appendChild(title);
 
     matches.forEach((match) => {

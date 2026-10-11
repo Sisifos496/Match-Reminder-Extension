@@ -55,6 +55,8 @@
             border-radius: 4px;
             padding: 8px 12px;
             cursor: pointer;
+            display: block;
+            margin: 8px auto;
         }
 
         .api-warning {
@@ -70,7 +72,8 @@
     <input type="text" class="team-search-input" placeholder="Search a soccer team...">
     <ul id="results-list" style="color: white;"></ul>
     <button class="saved-teams-button" id="saved-teams-button" type="button">View saved teams</button>
-    <p class="api-warning">If the extension isn't working, the issue is most likely related to API rate limit. Try again after waiting a moment.</p>
+    <p class="api-warning">If the extension isn't working, the issue is most likely related to API rate limit. Try again after waiting a moment.<br>Newly added teams are checked automatically within 1–10 minutes; opening a team's match page checks immediately.</p>
+    <script src="search-queries.js"></script>
     <script src="extension.js"></script>
 </body>
 </html>

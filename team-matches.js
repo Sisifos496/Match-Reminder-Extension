@@ -41,7 +41,8 @@ function getMatchDate(event) {
 
     for (const candidate of candidates) {
         const normalized = candidate.includes("T") ? candidate : `${candidate}T00:00:00`;
-        const parsed = new Date(normalized.includes("Z") || normalized.includes("+") || normalized.includes("-") ? normalized : `${normalized}Z`);
+        const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(normalized);
+        const parsed = new Date(hasTimezone ? normalized : `${normalized}Z`);
         if (!Number.isNaN(parsed.getTime())) {
             return parsed;
         }
@@ -58,7 +59,8 @@ function formatMatchDate(event) {
 
     return date.toLocaleString([], {
         dateStyle: "medium",
-        timeStyle: "short"
+        timeStyle: "short",
+        timeZone: "Europe/Istanbul"
     });
 }
 
@@ -71,7 +73,6 @@ function renderMatch(element, match) {
 
     const matchItem = document.createElement("li");
     matchItem.className = "match-item";
-    matchItem.tabIndex = 0;
 
     const date = document.createElement("div");
     date.className = "match-date";
@@ -86,41 +87,7 @@ function renderMatch(element, match) {
     league.textContent = match.strLeague || "Competition unavailable";
 
     matchItem.append(date, teams, league);
-    const openDetails = () => {
-        const params = new URLSearchParams({
-            fixture: match.idAPIfootball || "",
-            event: match.idEvent || "",
-            home: match.strHomeTeam || "Unknown",
-            away: match.strAwayTeam || "Unknown"
-        });
-        window.location.href = `event-details.html?${params}`;
-    };
-    matchItem.addEventListener("click", openDetails);
-    matchItem.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            openDetails();
-        }
-    });
     element.appendChild(matchItem);
-}
-
-function getUtcDateString(date) {
-    return date.toISOString().slice(0, 10);
-}
-
-async function fetchJsonWithRetry(url, signal) {
-    let attempt = 0;
-
-    while (attempt <= 2) {
-        const response = await fetch(url, { signal });
-        if (response.status !== 429 || attempt === 2) {
-            return response;
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** attempt));
-        attempt += 1;
-    }
 }
 
 async function loadMatches() {
@@ -132,51 +99,27 @@ async function loadMatches() {
     showMessage(upcomingMatches, "Loading...", "loading-state");
 
     try {
-        const teamResponse = await fetchJsonWithRetry(
-            `https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=${encodeURIComponent(teamId)}`
-        );
-        const upcomingResponse = await fetchJsonWithRetry(
-            `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${encodeURIComponent(teamId)}`
-        );
-
-        if (!teamResponse.ok || !upcomingResponse.ok) {
-            const error = new Error("TheSportsDB request failed");
-            error.rateLimited = teamResponse.status === 429 || upcomingResponse.status === 429;
-            throw error;
-        }
-
-        const [teamData, upcomingData] = await Promise.all([
-            teamResponse.json(),
-            upcomingResponse.json()
-        ]);
-
-        const team = teamData.teams?.[0];
-        if (!team || team.strSport !== "Soccer") {
-            showMessage(upcomingMatches, "This saved team ID is not a soccer team. Remove it and save the team again.", "error-state");
+        const result = await chrome.runtime.sendMessage({
+            action: "get_upcoming_match",
+            teamId
+        });
+        const cachedMatch = result?.cache?.match;
+        if (!result?.ok) {
+            if (cachedMatch && getMatchDate(cachedMatch) > new Date()) {
+                renderMatch(upcomingMatches, cachedMatch);
+            } else {
+                showMessage(upcomingMatches, result?.error || "Could not load matches.", "error-state");
+            }
             return;
         }
 
-        const upcomingEvents = Array.isArray(upcomingData.events)
-            ? upcomingData.events
-            : Array.isArray(upcomingData.results)
-                ? upcomingData.results
-                : [];
-        const now = new Date();
-        const upcoming = upcomingEvents
-            .filter((event) => event.dateEvent)
-            .filter((event) => getMatchDate(event) > now)
-            .sort((a, b) => getMatchDate(a) - getMatchDate(b));
-
-        renderMatch(upcomingMatches, upcoming[0]);
+        renderMatch(
+            upcomingMatches,
+            cachedMatch && getMatchDate(cachedMatch) > new Date() ? cachedMatch : null
+        );
     } catch (error) {
         console.error("Error fetching team matches:", error);
-        showMessage(
-            upcomingMatches,
-            error.rateLimited
-                ? "The match service is temporarily rate-limited. Please wait a moment and try again."
-                : "Could not load matches.",
-            "error-state"
-        );
+        showMessage(upcomingMatches, "Could not load matches.", "error-state");
     }
 }
 

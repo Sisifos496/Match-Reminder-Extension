@@ -53,6 +53,13 @@
             margin-top: 0;
         }
 
+        .refresh-reminder {
+            color: rgb(170, 170, 170);
+            font-size: 13px;
+            line-height: 1.4;
+            margin: -12px 0 20px;
+        }
+
         .match-list {
             display: grid;
             gap: 16px;
@@ -64,14 +71,9 @@
 
         .match-item {
             border-top: 1px solid rgb(70, 70, 70);
-            cursor: pointer;
             min-width: 0;
             padding: 20px 0 8px;
             text-align: center;
-        }
-
-        .match-item:focus {
-            outline: 2px solid rgb(180, 100, 140);
         }
 
         .match-date,
@@ -134,6 +136,7 @@
         <div class="matches-grid">
             <section class="matches-section">
                 <h2>Next match</h2>
+                <p class="refresh-reminder">Match results refresh automatically every 8–9 hours. If this team has not been checked yet, opening this page starts its first check.</p>
                 <ul class="match-list" id="upcoming-matches"></ul>
             </section>
         </div>

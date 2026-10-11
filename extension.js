@@ -33,7 +33,7 @@ async function fetchTeams(searchQuery, signal) {
             `https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=${encodeURIComponent(searchQuery)}`,
             signal
         );
-        if (!response?.ok) {
+        if (!response?.ok) { 
             return null;
         }
 
@@ -108,15 +108,19 @@ inputArea.addEventListener("input", () => {
             }
 
             const primaryTeams = primaryResult?.teams || [];
-            const fallbackQuery = primaryTeams.some((team) => team.strGender === "Female")
-                ? `${query} United`
-                : `${query} Women`;
-            const fallbackResult = knownTeamResult ? null : await fetchTeams(fallbackQuery, searchController.signal);
+            const searchQueries = getTeamSearchQueries(query, primaryTeams);
+            const fallbackResults = knownTeamResult
+                ? []
+                : await Promise.all(
+                    searchQueries
+                        .filter((searchValue) => searchValue !== query)
+                        .map((searchValue) => fetchTeams(searchValue, searchController.signal))
+                );
             if (currentRequestId !== searchRequestId) {
                 return;
             }
 
-            const searchResults = [primaryResult, fallbackResult, knownTeamResult];
+            const searchResults = [primaryResult, ...fallbackResults, knownTeamResult];
             const successfulSearches = searchResults.filter((data) => data !== null);
             const teams = successfulSearches.flatMap((data) => data.teams || []);
 
